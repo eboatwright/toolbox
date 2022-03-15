@@ -1,7 +1,7 @@
 use std::any::Any;
 use crate::*;
 
-use macroquad::prelude::Vec2;
+use macroquad::prelude::Vec3;
 
 pub struct Tree {
 	pub nodes: Vec<Box<dyn FullNode>>,
@@ -58,8 +58,8 @@ impl Tree {
 		path[0..path.len() - split[split.len() - 1].len() - 1].to_string()
 	}
 
-	pub fn get_node_position(&self, path: String) -> Vec2 {
-		let mut position = Vec2::ZERO;
+	pub fn get_node_position(&self, path: String) -> Vec3 {
+		let mut position = Vec3::ZERO;
 		let mut temp = path.clone();
 		while temp.len() > 0 {
 			let node_position = self.get_node_raw(&temp).get_position();

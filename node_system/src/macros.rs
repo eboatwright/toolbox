@@ -6,7 +6,7 @@ macro_rules! node {
 		impl Node for $struct_name {
 			fn get_type_id(&self) -> &'static str { self.type_id }
 			fn get_path(&self) -> String { self.path.clone() }
-			fn get_position(&self) -> Vec2 { self.position }
+			fn get_position(&self) -> Vec3 { self.position }
 		}
 
 		impl AsAny for $struct_name {
