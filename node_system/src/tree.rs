@@ -8,6 +8,7 @@ pub struct Tree {
 }
 
 impl Tree {
+	// All of these are pretty self explanatory
 	pub fn get_node(&self, path: &str) -> Option<&dyn Any> {
 		self.nodes
 			.iter()

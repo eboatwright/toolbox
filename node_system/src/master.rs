@@ -1,5 +1,6 @@
 use crate::Context;
 
+// A *very* simple function for handling *most* of the game loop
 pub struct Master {
 	pub init_systems: Vec<fn(&mut Context)>,
 	pub update_systems: Vec<fn(&mut Context)>,

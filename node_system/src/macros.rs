@@ -1,3 +1,5 @@
+// This is a helper macro for implementing everything a Node needs
+// (You have to have the type_id, path, and position properties on your struct)
 #[macro_export]
 macro_rules! node {
 	($struct_name: ident) => {
@@ -16,6 +18,7 @@ macro_rules! node {
 	}
 }
 
+// This is a helper macro for implementing everything a resource container needs
 #[macro_export]
 macro_rules! resources {
 	($struct_name: ident) => {
