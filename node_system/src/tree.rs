@@ -9,11 +9,11 @@ pub struct Tree {
 
 impl Tree {
 	// All of these are pretty self explanatory
-	pub fn get_node(&self, path: &str) -> Option<&dyn Any> {
+	pub fn get_node<NodeType: 'static + FullNode>(&self, path: &str) -> Option<&NodeType> {
 		self.nodes
 			.iter()
 			.find(|node| node.get_path() == path)
-			.map(|node| node.as_any())
+			.map(|node| node.as_any().downcast_ref::<NodeType>().unwrap())
 	}
 
 	pub fn get_node_mut<NodeType: 'static + FullNode>(&mut self, path: &str) -> Option<&mut NodeType> {
@@ -53,6 +53,11 @@ impl Tree {
 			.collect()
 	}
 
+	pub fn get_node_parent_path(&self, path: String) -> String {
+		let split: Vec<&str> = path.split('/').collect();
+		path[0..path.len() - split[split.len() - 1].len() - 1].to_string()
+	}
+
 	pub fn get_node_position(&self, path: String) -> Vec2 {
 		let mut position = Vec2::ZERO;
 		let mut temp = path.clone();
@@ -64,8 +69,18 @@ impl Tree {
 			if split.len() <= 1 {
 				break;
 			}
-			temp = temp[0..temp.len() - split[split.len() - 1].len() - 1].to_string();
+			temp = self.get_node_parent_path(temp);
 		}
 		position
+	}
+
+	pub fn get_node_parent<NodeType: 'static + FullNode>(&self, path: String) -> Option<&NodeType> {
+		let parent_path = self.get_node_parent_path(path);
+		self.get_node(&parent_path)
+	}
+
+	pub fn get_node_parent_mut<NodeType: 'static + FullNode>(&mut self, path: String) -> Option<&mut NodeType> {
+		let parent_path = self.get_node_parent_path(path);
+		self.get_node_mut(&parent_path)
 	}
 }

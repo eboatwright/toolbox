@@ -8,3 +8,16 @@ pub trait Node {
 }
 
 pub trait FullNode: Node + AsAny {}
+
+// Here's an example node :)
+/*
+
+struct TestNode {
+	type_id: &'static str,
+	path: String,
+	position: Vec2,
+}
+
+node!(TestNode);
+
+*/
