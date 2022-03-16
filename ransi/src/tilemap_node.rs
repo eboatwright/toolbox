@@ -56,12 +56,16 @@ pub struct TilemapNode {
 	pub tileset: Vec<Tile>,
 	pub tiles: Vec<Vec<Vec<u16>>>,
 	pub font: Texture2D,
-	pub min_render_layer: usize,
-	pub max_render_layer: usize,
+	pub min_render_z: usize,
+	pub max_render_z: usize,
+	pub render_layer: &'static str,
 }
 
 impl TilemapNode {
-	pub fn new(path: String, position: Vec3, tileset: Vec<Tile>, tiles: Vec<Vec<Vec<u16>>>, font: Texture2D, min_render_layer: usize, max_render_layer: usize) -> Self {
+	pub fn new(path: String, position: Vec3,
+		tileset: Vec<Tile>, tiles: Vec<Vec<Vec<u16>>>, font: Texture2D,
+		min_render_z: usize, max_render_z: usize, render_layer: &'static str) -> Self {
+
 		Self {
 			type_id: "tilemap",
 			path,
@@ -70,8 +74,9 @@ impl TilemapNode {
 			tileset,
 			tiles,
 			font,
-			min_render_layer,
-			max_render_layer,
+			min_render_z,
+			max_render_z,
+			render_layer,
 		}
 	}
 
@@ -87,13 +92,15 @@ impl TilemapNode {
 
 node!(TilemapNode);
 
-pub fn tilemap_render_system(context: &Context) {
+pub fn tilemap_render_system(context: &Context, layer: &str) {
 	for node in context.tree.get_nodes_by_type_id("tilemap").iter().map(|node| node.downcast_ref::<TilemapNode>().unwrap()) {
-		let position = context.tree.get_node_position(node.get_path());
-		for z in node.min_render_layer..clamp(node.max_render_layer, 0, node.tiles.len()) {
-			for y in 0..node.tiles[z].len() {
-				for x in 0..node.tiles[z][y].len() {
-					draw_glyph(position.truncate() + vec2(x as f32, y as f32), node.font, node.tileset[node.tiles[z][y][x] as usize].glyph, &context.camera_holder.camera2d.unwrap());
+		if node.render_layer == layer {
+			let position = context.tree.get_node_position(node.get_path());
+			for z in node.min_render_z..clamp(node.max_render_z, 0, node.tiles.len()) {
+				for y in 0..node.tiles[z].len() {
+					for x in 0..node.tiles[z][y].len() {
+						draw_glyph(position.truncate() + vec2(x as f32, y as f32), node.font, node.tileset[node.tiles[z][y][x] as usize].glyph, &context.camera_holder.get_2d());
+					}
 				}
 			}
 		}

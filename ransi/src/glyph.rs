@@ -18,6 +18,23 @@ impl Glyph {
 	}
 }
 
+#[derive(Clone)]
+pub struct Text {
+	pub text: String,
+	pub fg_color: Color,
+	pub bg_color: Color,
+}
+
+impl Text {
+	pub fn new(text: String, fg_color: Color, bg_color: Color) -> Self {
+		Self {
+			text,
+			fg_color,
+			bg_color,
+		}
+	}
+}
+
 // A function so I don't have to repeat myself between rendering nodes
 pub fn draw_glyph(position: Vec2, font: Texture2D, glyph: Glyph, camera: &Camera2D) {
 	// Make sure the tile position is within the bounds of the camera
@@ -60,4 +77,19 @@ pub fn draw_glyph(position: Vec2, font: Texture2D, glyph: Glyph, camera: &Camera
 			..Default::default()
 		},
 	);
+}
+
+// A simple function for calling draw_glyph over a String
+pub fn draw_string(position: Vec2, font: Texture2D, text: Text, camera: &Camera2D) {
+	let mut offset = Vec2::ZERO;
+	for i in 0..text.text.len() {
+		let c = text.text.chars().nth(i).unwrap();
+		if c == '\n' {
+			offset.x = 0.0;
+			offset.y += 1.0;
+			continue;
+		}
+		draw_glyph(position + offset, font, Glyph::new(c, text.fg_color, text.bg_color), camera);
+		offset.x += 1.0;
+	}
 }

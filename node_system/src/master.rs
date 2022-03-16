@@ -2,9 +2,10 @@ use crate::Context;
 
 // A *very* simple function for handling *most* of the game loop
 pub struct Master {
+	pub render_order: Vec<&'static str>,
 	pub init_systems: Vec<fn(&mut Context)>,
 	pub update_systems: Vec<fn(&mut Context)>,
-	pub render_systems: Vec<fn(&Context)>,
+	pub render_systems: Vec<fn(&Context, &str)>,
 	pub context: Context,
 }
 
@@ -22,8 +23,10 @@ impl Master {
 	}
 
 	pub fn render(&self) {
-		self.render_systems
-			.iter()
-			.for_each(|render| render(&self.context));
+		self.render_order.iter().for_each(|layer| {
+			self.render_systems
+				.iter()
+				.for_each(|render| render(&self.context, layer));
+		});
 	}
 }

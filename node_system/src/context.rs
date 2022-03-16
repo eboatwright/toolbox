@@ -5,23 +5,31 @@ use crate::ResourceContainer;
 
 // A work-around to having a 2d or 3d camera
 pub struct CameraHolder {
-	pub camera2d: Option<Camera2D>,
-	pub camera3d: Option<Camera3D>,
+	pub two_d: Camera2D,
+	pub three_d: Camera3D,
 }
 
 impl CameraHolder {
-	pub fn camera2d(camera2d: Camera2D) -> Self {
+	pub fn camera2d(camera: Camera2D) -> Self {
 		Self {
-			camera2d: Some(camera2d),
-			camera3d: None,
+			two_d: camera,
+			three_d: Camera3D::default(),
 		}
 	}
 
-	pub fn camera3d(camera3d: Camera3D) -> Self {
+	pub fn camera3d(camera: Camera3D) -> Self {
 		Self {
-			camera2d: None,
-			camera3d: Some(camera3d),
+			two_d: Camera2D::default(),
+			three_d: camera,
 		}
+	}
+
+	pub fn get_2d(&self) -> &Camera2D {
+		&self.two_d
+	}
+
+	pub fn get_3d(&self) -> &Camera3D {
+		&self.three_d
 	}
 }
 
