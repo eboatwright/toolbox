@@ -83,4 +83,22 @@ impl Tree {
 		let parent_path = self.get_node_parent_path(path);
 		self.get_node_mut(&parent_path)
 	}
+
+	pub fn get_node_children(&self, path: String) -> Vec<&dyn Any> {
+		self.nodes
+			.iter()
+			.filter(|node| node.get_path().contains(&path)
+						&& node.get_path().matches("/").collect::<Vec<_>>().len() == path.matches("/").collect::<Vec<_>>().len() + 1)
+			.map(|node| node.as_any())
+			.collect()
+	}
+
+	pub fn get_node_children_mut(&mut self, path: String) -> Vec<&mut dyn Any> {
+		self.nodes
+			.iter_mut()
+			.filter(|node| node.get_path().contains(&path)
+						&& node.get_path().matches("/").collect::<Vec<_>>().len() == path.matches("/").collect::<Vec<_>>().len() + 1)
+			.map(|node| node.as_any_mut())
+			.collect()
+	}
 }
