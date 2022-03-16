@@ -9,6 +9,11 @@ pub struct Tree {
 
 impl Tree {
 	// All of these are pretty self explanatory
+
+	pub fn add_node(&mut self, node: Box<dyn FullNode>) {
+		self.nodes.push(node);
+	}
+
 	pub fn get_node<NodeType: 'static + FullNode>(&self, path: &str) -> Option<&NodeType> {
 		self.nodes
 			.iter()
