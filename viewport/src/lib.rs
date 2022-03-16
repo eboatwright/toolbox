@@ -2,9 +2,9 @@ use macroquad::prelude::*;
 
 // This holds information about the screen
 pub struct Viewport {
-	pub(crate) width: f32,
-	pub(crate) height: f32,
-	pub(crate) render_target: RenderTarget,
+	pub width: f32,
+	pub height: f32,
+	pub render_target: RenderTarget,
 	// This is for calculating mouse position
 	pub(crate) aspect_diff: f32,
 	pub camera: Camera2D,

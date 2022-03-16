@@ -33,11 +33,11 @@ impl GlyphNode {
 
 node!(GlyphNode);
 
-pub fn glyph_render_system(context: &Context, camera: &Camera2D) {
+pub fn glyph_render_system(context: &Context) {
 	// Iterate through each glyph node, and downcast them all to GlyphNode
 	for node in context.tree.get_nodes_by_type_id("glyph").iter().map(|node| node.downcast_ref::<GlyphNode>().unwrap()) {
 		// Get the *global* position of the node
 		let position = context.tree.get_node_position(node.get_path());
-		draw_glyph(position.truncate(), node.font, node.glyph, camera);
+		draw_glyph(position.truncate(), node.font, node.glyph, &context.camera_holder.camera2d.unwrap());
 	}
 }
