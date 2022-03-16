@@ -87,7 +87,7 @@ impl Tree {
 	pub fn get_node_children(&self, path: String) -> Vec<&dyn Any> {
 		self.nodes
 			.iter()
-			.filter(|node| node.get_path().contains(&path)
+			.filter(|node| node.get_path().starts_with(&path)
 						&& node.get_path().matches("/").collect::<Vec<_>>().len() == path.matches("/").collect::<Vec<_>>().len() + 1)
 			.map(|node| node.as_any())
 			.collect()
@@ -96,9 +96,37 @@ impl Tree {
 	pub fn get_node_children_mut(&mut self, path: String) -> Vec<&mut dyn Any> {
 		self.nodes
 			.iter_mut()
-			.filter(|node| node.get_path().contains(&path)
+			.filter(|node| node.get_path().starts_with(&path)
 						&& node.get_path().matches("/").collect::<Vec<_>>().len() == path.matches("/").collect::<Vec<_>>().len() + 1)
 			.map(|node| node.as_any_mut())
 			.collect()
+	}
+
+	pub fn get_node_children_raw(&self, path: String) -> Vec<&Box<dyn FullNode>> {
+		self.nodes
+			.iter()
+			.filter(|node| node.get_path().starts_with(&path)
+						&& node.get_path().matches("/").collect::<Vec<_>>().len() == path.matches("/").collect::<Vec<_>>().len() + 1)
+			.collect()
+	}
+
+	pub fn get_node_children_raw_mut(&mut self, path: String) -> Vec<&mut Box<dyn FullNode>> {
+		self.nodes
+			.iter_mut()
+			.filter(|node| node.get_path().starts_with(&path)
+						&& node.get_path().matches("/").collect::<Vec<_>>().len() == path.matches("/").collect::<Vec<_>>().len() + 1)
+			.collect()
+	}
+
+	pub fn destroy_node(&mut self, path: String) {
+		let mut to_destroy = vec![];
+		for (i, node) in self.nodes.iter().enumerate().rev() {
+			if node.get_path().starts_with(&path) {
+				to_destroy.push(i);
+			}
+		}
+		for i in to_destroy {
+			self.nodes.remove(i);
+		}
 	}
 }
