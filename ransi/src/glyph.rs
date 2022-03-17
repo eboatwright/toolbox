@@ -1,7 +1,9 @@
 use macroquad::prelude::*;
 use crate::GLYPHS;
+use viewport::Viewport;
 
 // Holds data about a glyph for rendering
+#[derive(Clone, Default)]
 pub struct Glyph {
 	pub glyph: char,
 	pub fg_color: Color,
@@ -18,7 +20,17 @@ impl Glyph {
 	}
 
 	// Render the glyph with the texture, at the position
-	pub fn render(&self, font_texture: Texture2D, position: Vec2) {
+	pub fn render(&self, font_texture: Texture2D, position: Vec2, viewport: Option<&Viewport>) {
+		// If a viewport was provided, check and see if the tile to render is in the bounds before rendering
+		if let Some(viewport) = viewport {
+			if position.y * 16.0 >= viewport.bottom()
+			|| (position.y + 1.0) * 16.0 <= viewport.top()
+			|| position.x * 9.0 >= viewport.right()
+			|| (position.x + 1.0) * 9.0 <= viewport.left() {
+				return;
+			}
+		}
+
 		// Draw the background
 		draw_rectangle(
 			position.x * 9.0,
