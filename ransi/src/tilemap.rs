@@ -18,6 +18,10 @@ impl Tile {
 			tags,
 		}
 	}
+
+	pub fn has_tag(&self, tag: &'static str) -> bool {
+		self.tags.contains(&tag)
+	}
 }
 
 pub struct Tilemap {
