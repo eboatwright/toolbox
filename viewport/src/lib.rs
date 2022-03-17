@@ -13,6 +13,7 @@ pub struct Viewport {
 impl Viewport {
 	pub fn new(width: f32, height: f32) -> Viewport {
 		let render_target = render_target(width as u32, height as u32);
+		render_target.texture.set_filter(FilterMode::Nearest);
 		let viewport = Viewport {
 			width,
 			height,
