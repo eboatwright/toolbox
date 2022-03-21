@@ -57,7 +57,7 @@ impl Tilemap {
 		for z in self.min_z_render..usize::min(self.max_z_render, self.tiles.len()) {
 			for y in 0..self.tiles[z].len() {
 				for x in 0..self.tiles[z][y].len() {
-					self.tilemap[self.tiles[z][y][x] as usize].glyph.render(font_texture, vec2(x as f32, y as f32), viewport);
+					self.get_tile(x, y, z).glyph.render(font_texture, vec2(x as f32, y as f32), viewport);
 				}
 			}
 		}
