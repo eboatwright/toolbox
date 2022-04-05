@@ -1,10 +1,15 @@
 // A simple library for frame based animation
+
+#[derive(Copy, Clone)]
+pub struct AnimationFrame {
+	pub index: usize,
+	pub duration: f32,
+}
+
 #[derive(Clone)]
 pub struct Animation {
 	pub name: &'static str,
-	// The frame indexes of the animation
-	pub frames: Vec<usize>,
-	pub frame_duration: f32,
+	pub frames: Vec<AnimationFrame>,
 	// Wether the Animation can be interrupted by change_animation or not
 	pub dont_interrupt: bool,
 }
@@ -14,7 +19,6 @@ impl Default for Animation {
 		Self {
 			name: "animation",
 			frames: vec![],
-			frame_duration: 1.0,
 			dont_interrupt: false,
 		}
 	}
@@ -38,7 +42,7 @@ impl Animator {
 	pub fn update(&mut self, delta_time: f32) {
 		self.timer -= delta_time;
 		if self.timer <= 0.0 {
-			self.timer = self.current_animation().frame_duration;
+			self.timer = self.current_animation().frames[self.current_frame_index].duration;
 			self.current_frame_index += 1;
 			// If the animation frame is out of bounds
 			if self.current_frame_index >= self.current_animation().frames.len() {
@@ -80,7 +84,7 @@ impl Animator {
 
 	// Returns the current frame index
 	pub fn get_frame(&self) -> f32 {
-		self.current_animation().frames[self.current_frame_index] as f32
+		self.current_animation().frames[self.current_frame_index].index as f32
 	}
 
 	// A pseudo-code example of using this:
