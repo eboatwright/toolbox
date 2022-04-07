@@ -6,12 +6,31 @@ pub struct AnimationFrame {
 	pub duration: f32,
 }
 
+impl AnimationFrame {
+	pub fn new(index: usize, duration: f32) -> Self {
+		Self {
+			index,
+			duration,
+		}
+	}
+}
+
 #[derive(Clone)]
 pub struct Animation {
 	pub name: &'static str,
 	pub frames: Vec<AnimationFrame>,
 	// Wether the Animation can be interrupted by change_animation or not
 	pub dont_interrupt: bool,
+}
+
+impl Animation {
+	pub fn new(name: &'static str, frames: Vec<AnimationFrame>, dont_interrupt: bool) -> Self {
+		Self {
+			name,
+			frames,
+			dont_interrupt,
+		}
+	}
 }
 
 impl Default for Animation {
@@ -34,18 +53,23 @@ pub struct Animator {
 }
 
 impl Animator {
-	// Just a helper function for returning the current Animation
-	pub fn current_animation(&self) -> &Animation {
-		&self.animations[self.current_animation_index]
+	pub fn new(animations: Vec<Animation>) -> Self {
+		Self {
+			animations,
+			current_animation_index: 0,
+			current_frame_index: 0,
+			timer: 0.0,
+			dont_interrupt: false,
+		}
 	}
 
 	pub fn update(&mut self, delta_time: f32) {
 		self.timer -= delta_time;
 		if self.timer <= 0.0 {
-			self.timer = self.current_animation().frames[self.current_frame_index].duration;
+			self.timer = self.animations[self.current_animation_index].frames[self.current_frame_index].duration;
 			self.current_frame_index += 1;
 			// If the animation frame is out of bounds
-			if self.current_frame_index >= self.current_animation().frames.len() {
+			if self.current_frame_index >= self.animations[self.current_animation_index].frames.len() {
 				if self.dont_interrupt {
 					// If animation can't be interrupted, it can't loop either (This is here because if it's not, it looks *really* weird)
 					self.dont_interrupt = false;
@@ -61,7 +85,7 @@ impl Animator {
 	pub fn change_animation(&mut self, name: &'static str) {
 		// Return if the animation is already being played, or the current animation can't be interrupted
 		if self.dont_interrupt
-		|| self.current_animation().name == name {
+		|| self.animations[self.current_animation_index].name == name {
 			return;
 		}
 
@@ -73,7 +97,7 @@ impl Animator {
 				self.dont_interrupt = animation.dont_interrupt;
 
 				// Reset timers
-				self.current_animation_index = 0;
+				self.current_frame_index = 0;
 				self.timer = 0.0;
 
 				// Return because we found the animaiton
@@ -84,7 +108,7 @@ impl Animator {
 
 	// Returns the current frame index
 	pub fn get_frame(&self) -> f32 {
-		self.current_animation().frames[self.current_frame_index].index as f32
+		self.animations[self.current_animation_index].frames[self.current_frame_index].index as f32
 	}
 
 	// A pseudo-code example of using this:
